@@ -4,15 +4,23 @@
         org.clojure/clojure                             {:mvn/version "1.11.3"}
         org.clojure/core.async                          {:mvn/version "1.6.681"}
 
+        ;; HTTP client bits
+        clj-http/clj-http                               {:mvn/version "3.12.3"}
+
         ;; Utilities
         com.widdindustries/cljc.java-time               {:mvn/version "0.1.21"}
+        metosin/jsonista                                {:mvn/version "0.3.5"}
         metosin/malli                                   {:mvn/version "0.10.1"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]}
 
   :test {:extra-paths ["test"]
-         :extra-deps {lambdaisland/kaocha                       {:mvn/version "1.91.1392"}}
+         :extra-deps {lambdaisland/kaocha                       {:mvn/version "1.91.1392"}
+                      http-kit/http-kit                         {:mvn/version "2.8.0"}
+                      ring/ring-defaults                        {:mvn/version "0.3.2"}
+                      ring/ring-headers                         {:mvn/version "0.4.0"}
+                      metosin/reitit                            {:mvn/version "0.7.2"}}
          :main-opts ["-m" "kaocha.runner"]}
 
   :build
