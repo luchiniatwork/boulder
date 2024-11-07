@@ -3,8 +3,7 @@
             [boulder.prompt-template.simple :as simple]
             [clj-http.client :as http]
             [cljc.java-time.instant :as inst]
-            [jsonista.core :as json])
-  (:import [java.util Base64]))
+            [jsonista.core :as json]))
 
 
 (defn ^:private fetch-prompt [{:keys [url public-key secret-key] :as _server-config}
@@ -65,7 +64,8 @@
            (throw (ex-info "Unable to load langfuse prompt" {:prompt-id prompt-id}))))))))
 
 
-#_(let [url "https://langfuse.theoai.ai"
+#_(let [url #_"https://langfuse.theoai.ai"
+        "http://theo-langfuse.internal:7000"
         prompt-id "facts-extractor" #_"score-correctness"
         full-url (str url "/api/public/v2/prompts/" prompt-id)
         public-key "pk-lf-81417b46-ef1d-4368-acc6-58232b2c0168"
@@ -76,9 +76,9 @@
                        :public-key public-key
                        :secret-key secret-key}
         prompt-config {:label label}]
-    #_(fetch-prompt server-config prompt-config prompt-id)
-    (core/apply (create server-config
-                        prompt-id
-                        {:keys-to-apply [:prompt :config]})
-                {:claim_content "FOOBAR!!!!!"
-                 :var "xxxx"}))
+    (fetch-prompt server-config prompt-config prompt-id)
+    #_(core/apply (create server-config
+                          prompt-id
+                          {:keys-to-apply [:prompt :config]})
+                  {:claim_content "FOOBAR!!!!!"
+                   :var "xxxx"}))

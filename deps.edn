@@ -7,8 +7,13 @@
         ;; HTTP client bits
         clj-http/clj-http                               {:mvn/version "3.12.3"}
 
+        ;; LLM bits
+        me.pmatiello/openai-api                         {:mvn/version "0.5.0"}
+        net.clojars.luchiniatwork/dag-o-bert            {:mvn/version "0.1.1"}
+
         ;; Utilities
         com.widdindustries/cljc.java-time               {:mvn/version "0.1.21"}
+        camel-snake-kebab/camel-snake-kebab             {:mvn/version "0.4.3"}
         metosin/jsonista                                {:mvn/version "0.3.5"}
         metosin/malli                                   {:mvn/version "0.10.1"}}
 
