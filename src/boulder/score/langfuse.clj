@@ -1,6 +1,7 @@
 (ns boulder.score.langfuse
   (:require [boulder.score.core :as core]
             [camel-snake-kebab.core :refer [->kebab-case-keyword]]
+            [camel-snake-kebab.extras :refer [transform-keys]]
             [clj-http.client :as http]
             [jsonista.core :as json]
             [taoensso.timbre :refer [debug info warn error fatal report]]))
@@ -17,9 +18,8 @@
 
 (defn ^:private normalize-payload
   [payload]
-  (let [{:keys [observation-id comment data-type]} (->kebab-case-keyword payload)]
-    (cond-> {:traceId (or (:trace-id payload)
-                          (:trace_id payload))
+  (let [{:keys [observation-id comment data-type]} (transform-keys ->kebab-case-keyword payload)]
+    (cond-> {:traceId (:trace-id payload)
              :name (:name payload)
              :value (:value payload)}
       observation-id
