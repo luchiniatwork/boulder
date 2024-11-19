@@ -3,7 +3,8 @@
             [boulder.prompt-template.simple :as simple]
             [clj-http.client :as http]
             [cljc.java-time.instant :as inst]
-            [jsonista.core :as json]))
+            [jsonista.core :as json]
+            [taoensso.timbre :refer [debug info warn error fatal report]]))
 
 
 (defn ^:private fetch-prompt [{:keys [url public-key secret-key] :as _server-config}
@@ -11,11 +12,15 @@
                                :or {label "production"}
                                :as _prompt-config}
                               prompt-id]
+  (debug {:msg "Fetching LangFuse prompt"
+          :prompt-id prompt-id})
   (let [{:keys [status body]} (-> (str url "/api/public/v2/prompts/" prompt-id)
                                   (http/get {:accept :json
                                              :basic-auth [public-key secret-key]
                                              :query-params {:label label}}))]
     (when (= 200 status)
+      (debug {:msg "Successful LangFuse prompt fetch"
+              :prompt-id prompt-id})
       (-> body
           (json/read-value json/keyword-keys-object-mapper)))))
 
@@ -30,13 +35,17 @@
     (let [{:keys [prompt config]
            :as raw-prompt} (fetch-prompt server-config prompt-config prompt-id)]
       (when (not (nil? raw-prompt))
+        (debug {:msg "LangFuse prompt needs to be updated"
+                :prompt-id prompt-id})
         (reset! !a {:timestamp (inst-ms (inst/now))
                     :raw-prompt raw-prompt
                     :simple-downstream (simple/create {:prompt prompt
                                                        :config config}
                                                       {:keys-to-apply keys-to-apply})})))
     (catch Throwable ex
+      (warn {:msg "Failed fetching langfuse prompt"})
       (when (empty? @!a)
+        (fatal {:msg "No cached prompt available. Will throw."})
         (throw ex)))))
 
 
@@ -51,8 +60,10 @@
           cache-time-ms 300000}
      :as prompt-config}]
    (let [!prompt (atom {})]
-     (when (not lazy-init?)
-       (update-atom! !prompt server-config prompt-config prompt-id))
+     (if (not lazy-init?)
+       (do (debug {:msg "Langfuse prompt initialization triggered"})
+           (update-atom! !prompt server-config prompt-config prompt-id))
+       (debug {:msg "Lazy Langfuse prompt initialization"}))
      (reify core/IPromptTemplate
        (apply [_ payload-map]
          (when (or (empty? @!prompt)

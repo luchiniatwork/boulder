@@ -8,7 +8,7 @@
             [me.pmatiello.openai-api.api :as openai]))
 
 (def openai-config (openai/config :api-key ""
-                                  :base-url "http://theo-litellm-dev.flycast"))
+                                  :base-url "http://theo-llm-proxy-dev.flycast/v1"))
 
 (def langfuse-config {:url "https://langfuse.theoai.ai"
                       :public-key ""

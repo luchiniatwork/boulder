@@ -15,7 +15,8 @@
         com.widdindustries/cljc.java-time               {:mvn/version "0.1.21"}
         camel-snake-kebab/camel-snake-kebab             {:mvn/version "0.4.3"}
         metosin/jsonista                                {:mvn/version "0.3.5"}
-        metosin/malli                                   {:mvn/version "0.10.1"}}
+        metosin/malli                                   {:mvn/version "0.10.1"}
+        com.taoensso/timbre                             {:mvn/version "6.5.0"}}
 
  :aliases
  {:dev {:extra-paths ["dev"]}
