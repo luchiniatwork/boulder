@@ -16,12 +16,19 @@
     "CATEGORICAL"))
 
 
+(defn ^:private normalize-value [{:keys [data-type value]}]
+  (case data-type
+    :boolean
+    (if value 1 0)
+    value))
+
+
 (defn ^:private normalize-payload
   [payload]
   (let [{:keys [observation-id comment data-type]} (transform-keys ->kebab-case-keyword payload)]
     (cond-> {:traceId (:trace-id payload)
              :name (:name payload)
-             :value (:value payload)}
+             :value (normalize-value [payload])}
       observation-id
       (assoc :observationId observation-id)
       comment

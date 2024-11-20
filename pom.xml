@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.clojars.luchiniatwork</groupId>
   <artifactId>boulder</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   <name>boulder</name>
   <dependencies>
     <dependency>

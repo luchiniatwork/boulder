@@ -13,14 +13,16 @@
                                :as _prompt-config}
                               prompt-id]
   (debug {:msg "Fetching LangFuse prompt"
-          :prompt-id prompt-id})
+          :prompt-id prompt-id
+          :label label})
   (let [{:keys [status body]} (-> (str url "/api/public/v2/prompts/" prompt-id)
                                   (http/get {:accept :json
                                              :basic-auth [public-key secret-key]
                                              :query-params {:label label}}))]
     (when (= 200 status)
       (debug {:msg "Successful LangFuse prompt fetch"
-              :prompt-id prompt-id})
+              :prompt-id prompt-id
+              :label label})
       (-> body
           (json/read-value json/keyword-keys-object-mapper)))))
 
