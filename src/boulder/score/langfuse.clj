@@ -28,7 +28,7 @@
   (let [{:keys [observation-id comment data-type]} (transform-keys ->kebab-case-keyword payload)]
     (cond-> {:traceId (:trace-id payload)
              :name (:name payload)
-             :value (normalize-value [payload])}
+             :value (normalize-value payload)}
       observation-id
       (assoc :observationId observation-id)
       comment
