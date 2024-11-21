@@ -2,20 +2,37 @@
   (:require [jsonista.core :as json]))
 
 (defn create-simple-handler
+  "`agent-fetcher` is a f that returns a f that will be called with the
+  extracted request parameters.
+
+  `opts` takes:
+
+  * `:agent-name-finder`: a f that, given the request, returns the
+  name of the agent. Default behavior if `nil` is to grab the `agent`
+  parameter from `:query-params`
+
+  * `:params-extractor`: a f that, given the request, returns the
+  parameters to be sent to the agent.
+  "
   ([agent-fetcher]
-   (create-simple-handler agent-fetcher (constantly nil)))
-  ([agent-fetcher agent-name-finder]
-   (fn [{:keys [request-method body-params query-params headers]
+   (create-simple-handler agent-fetcher nil))
+  ([agent-fetcher {:keys [agent-name-finder params-extractor]
+                   :or {agent-name-finder #(-> % :query-params :agent)
+                        params-extractor #(-> % :body-params)}
+                   :as _opts}]
+   (fn [{:keys [request-method headers]
          :as request}]
      (if (and (= "application/json" (get headers "accept"))
               (= :post request-method))
-       (let [agent (or (agent-name-finder request)
-                       (:agent query-params))]
+       (let [agent (agent-name-finder request)]
          (if-let [agent-proper (agent-fetcher agent)]
            (try
              {:status 200
               :headers {"Content-Type" "application/json"}
-              :body (-> body-params agent-proper json/write-value-as-string)}
+              :body (-> request
+                        params-extractor
+                        agent-proper
+                        json/write-value-as-string)}
              (catch Throwable ex
                {:status 500
                 :headers {"Content-Type" "text/html"}
